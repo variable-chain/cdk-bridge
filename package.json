@@ -10,7 +10,7 @@
     "format": "prettier --write .",
     "lint": "eslint './src/**/*.{ts,tsx}'",
     "lint:fix": "npm run lint -- --fix",
-    "dev": "vite",
+    "dev": "vite --no-open",
     "build": "vite build",
     "preview": "vite preview"
   },
