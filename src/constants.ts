@@ -59,7 +59,7 @@ export const GAS_PRICE_INCREASE_PERCENTAGE = 50; // 50%
 export const DEPOSIT_CHECK_WORD = "I understand";
 
 export const ETH_TOKEN_LOGO_URI =
-  "https://raw.githubusercontent.com/Uniswap/interface/main/src/assets/images/ethereum-logo.png";
+  "https://raw.githubusercontent.com/Uniswap/interface/main/packages/ui/src/assets/logos/png/ethereum-logo.png";
 
 export const POLYGON_SUPPORT_URL = "https://support.polygon.technology";
 
@@ -85,6 +85,7 @@ export const getChains = ({
     bridgeContractAddress: string;
     explorerUrl: string;
     poeContractAddress: string;
+    rollupManagerAddress: string;
     rpcUrl: string;
   };
   polygonZkEVM: {
@@ -121,6 +122,7 @@ export const getChains = ({
       networkId: 0,
       poeContractAddress: ethereum.poeContractAddress,
       provider: ethereumProvider,
+      rollupManagerAddress: ethereum.rollupManagerAddress,
     },
     {
       bridgeContractAddress: polygonZkEVM.bridgeContractAddress,
@@ -146,8 +148,8 @@ export const getEtherToken = (chain: Chain): Token => {
     chainId: chain.chainId,
     decimals: 18,
     logoURI: ETH_TOKEN_LOGO_URI,
-    name: "Variable",
-    symbol: "VAR",
+    name: "Ether",
+    symbol: "ETH",
   };
 };
 

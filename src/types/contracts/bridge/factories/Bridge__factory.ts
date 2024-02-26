@@ -29,6 +29,11 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "GasTokenNetworkMustBeZeroOnEther",
+    type: "error",
+  },
+  {
+    inputs: [],
     name: "GlobalExitRootInvalid",
     type: "error",
   },
@@ -50,6 +55,16 @@ const _abi = [
   {
     inputs: [],
     name: "MsgValueNotZero",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NativeTokenIsEther",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "NoValueInMessagesOnGasTokenNetworks",
     type: "error",
   },
   {
@@ -84,7 +99,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "OnlyPolygonZkEVM",
+    name: "OnlyRollupManager",
     type: "error",
   },
   {
@@ -147,9 +162,9 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "uint32",
-        name: "index",
-        type: "uint32",
+        internalType: "uint256",
+        name: "globalIndex",
+        type: "uint256",
       },
       {
         indexed: false,
@@ -237,6 +252,19 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "WETHToken",
+    outputs: [
+      {
+        internalType: "contract TokenWrapped",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "activateEmergencyState",
     outputs: [],
     stateMutability: "nonpayable",
@@ -311,6 +339,44 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint32",
+        name: "destinationNetwork",
+        type: "uint32",
+      },
+      {
+        internalType: "address",
+        name: "destinationAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "amountWETH",
+        type: "uint256",
+      },
+      {
+        internalType: "bool",
+        name: "forceUpdateGlobalExitRoot",
+        type: "bool",
+      },
+      {
+        internalType: "bytes",
+        name: "metadata",
+        type: "bytes",
+      },
+    ],
+    name: "bridgeMessageWETH",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "leafHash",
+        type: "bytes32",
+      },
+      {
         internalType: "bytes32[32]",
         name: "smtProof",
         type: "bytes32[32]",
@@ -319,6 +385,64 @@ const _abi = [
         internalType: "uint32",
         name: "index",
         type: "uint32",
+      },
+    ],
+    name: "calculateRoot",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "pure",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint32",
+        name: "originNetwork",
+        type: "uint32",
+      },
+      {
+        internalType: "address",
+        name: "originTokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "calculateTokenWrapperAddress",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32[32]",
+        name: "smtProofLocalExitRoot",
+        type: "bytes32[32]",
+      },
+      {
+        internalType: "bytes32[32]",
+        name: "smtProofRollupExitRoot",
+        type: "bytes32[32]",
+      },
+      {
+        internalType: "uint256",
+        name: "globalIndex",
+        type: "uint256",
       },
       {
         internalType: "bytes32",
@@ -370,13 +494,18 @@ const _abi = [
     inputs: [
       {
         internalType: "bytes32[32]",
-        name: "smtProof",
+        name: "smtProofLocalExitRoot",
         type: "bytes32[32]",
       },
       {
-        internalType: "uint32",
-        name: "index",
-        type: "uint32",
+        internalType: "bytes32[32]",
+        name: "smtProofRollupExitRoot",
+        type: "bytes32[32]",
+      },
+      {
+        internalType: "uint256",
+        name: "globalIndex",
+        type: "uint256",
       },
       {
         internalType: "bytes32",
@@ -465,12 +594,38 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "getDepositRoot",
+    name: "gasTokenAddress",
     outputs: [
       {
-        internalType: "bytes32",
+        internalType: "address",
         name: "",
-        type: "bytes32",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "gasTokenMetadata",
+    outputs: [
+      {
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "gasTokenNetwork",
+    outputs: [
+      {
+        internalType: "uint32",
+        name: "",
+        type: "uint32",
       },
     ],
     stateMutability: "view",
@@ -526,6 +681,38 @@ const _abi = [
     type: "function",
   },
   {
+    inputs: [],
+    name: "getRoot",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "token",
+        type: "address",
+      },
+    ],
+    name: "getTokenMetadata",
+    outputs: [
+      {
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "uint32",
@@ -570,14 +757,29 @@ const _abi = [
         type: "uint32",
       },
       {
+        internalType: "address",
+        name: "_gasTokenAddress",
+        type: "address",
+      },
+      {
+        internalType: "uint32",
+        name: "_gasTokenNetwork",
+        type: "uint32",
+      },
+      {
         internalType: "contract IBasePolygonZkEVMGlobalExitRoot",
         name: "_globalExitRootManager",
         type: "address",
       },
       {
         internalType: "address",
-        name: "_polygonZkEVMaddress",
+        name: "_polygonRollupManager",
         type: "address",
+      },
+      {
+        internalType: "bytes",
+        name: "_gasTokenMetadata",
+        type: "bytes",
       },
     ],
     name: "initialize",
@@ -588,9 +790,14 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "index",
-        type: "uint256",
+        internalType: "uint32",
+        name: "leafIndex",
+        type: "uint32",
+      },
+      {
+        internalType: "uint32",
+        name: "sourceBridgeNetwork",
+        type: "uint32",
       },
     ],
     name: "isClaimed",
@@ -645,7 +852,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "polygonZkEVMaddress",
+    name: "polygonRollupManager",
     outputs: [
       {
         internalType: "address",
@@ -779,7 +986,7 @@ const _abi = [
     stateMutability: "view",
     type: "function",
   },
-];
+] as const;
 
 export class Bridge__factory {
   static readonly abi = _abi;

@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { routerStateParser } from "src/adapters/browser";
 import { getPolicyCheck, setPolicyCheck } from "src/adapters/storage";
-import { ReactComponent as PolygonZkEVMLogo } from "src/assets/variable-logo.svg";
+import { ReactComponent as PolygonZkEVMLogo } from "src/assets/polygon-zkevm-logo.svg";
 import { useEnvContext } from "src/contexts/env.context";
 import { useProvidersContext } from "src/contexts/providers.context";
 import { EthereumChainId, PolicyCheck, WalletName } from "src/domain";
@@ -94,14 +94,14 @@ export const Login: FC = () => {
         <ConfirmationModal
           message={
             <Typography type="body1">
-              DISCLAIMER: This version of the Variable cdk will require frequent maintenance and
+              DISCLAIMER: This version of the Polygon zkEVM will require frequent maintenance and
               may be restarted if upgrades are needed.
             </Typography>
           }
           onClose={() => setShowPolicyModal(false)}
           onConfirm={onConnectProvider}
           showCancelButton={false}
-          title={`Welcome to the Variable cdk ${deploymentName || ""}`}
+          title={`Welcome to the Polygon zkEVM ${deploymentName || ""}`}
         />
       )}
     </div>

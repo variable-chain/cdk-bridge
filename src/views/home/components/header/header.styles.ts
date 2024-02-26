@@ -38,7 +38,7 @@ export const useHeaderStyles = createUseStyles((theme: Theme) => ({
     transition: theme.hoverTransition,
   },
   logo: {
-    height: 70,
+    height: 56,
   },
   rightBlock: {
     justifyContent: "end",

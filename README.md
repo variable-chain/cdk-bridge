@@ -1,20 +1,20 @@
-# Variable CDK Bridge UI
+# zkEVM Bridge UI
 
-The Variable CDK Bridge UI provides a simple user interface to bridge ETH and your favorite ERC-20 tokens
-from Ethereum to the Variable CDK and back.
+The zkEVM Bridge UI provides a simple user interface to bridge ETH and your favorite ERC-20 tokens
+from Ethereum to the Polygon zkEVM and back.
 
 ## Development
 
 Clone the repo:
 
 ```sh
-git clone git@github.com:variable-exchange/cdk-bridge.git
+git clone git@github.com:0xPolygonHermez/zkevm-bridge-ui.git
 ```
 
 Move into the project directory:
 
 ```sh
-cd cdk-bridge
+cd zkevm-bridge-ui
 ```
 
 Install project dependencies:
@@ -55,10 +55,10 @@ npm run dev
 A [GitHub action](.github/workflows/push-docker-develop.yml) is already configured to automatically
 generate and push images to DockerHub on updates to the **develop** and **main** branches.
 
-To locally generate a Docker image of the CDK Bridge UI, you can just run the following command:
+To locally generate a Docker image of the zkEVM Bridge UI, you can just run the following command:
 
 ```sh
-docker build . -t CDK-bridge-ui:local
+docker build . -t zkevm-bridge-ui:local
 ```
 
 The Docker image won't build the UI until you run it, in order to be able to use dynamic environment
@@ -83,5 +83,5 @@ docker run \
 -e ENABLE_OUTDATED_NETWORK_MODAL=false \
 -e ENABLE_DEPOSIT_WARNING=true \
 -e ENABLE_REPORT_FORM=false \
--p 8080:80 CDK-bridge-ui:local
+-p 8080:80 zkevm-bridge-ui:local
 ```
