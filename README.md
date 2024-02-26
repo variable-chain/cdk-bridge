@@ -1,7 +1,7 @@
 # Variable CDK Bridge UI
 
 The Variable CDK Bridge UI provides a simple user interface to bridge ETH and your favorite ERC-20 tokens
-from Ethereum to the Polygon CDK and back.
+from Ethereum to the Variable CDK and back.
 
 ## Development
 
