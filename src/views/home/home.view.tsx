@@ -2,19 +2,20 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { getIsDepositWarningDismissed, setIsDepositWarningDismissed } from "src/adapters/storage";
 
-import { ReactComponent as MetaMaskIcon } from "src/assets/icons/metamask.svg";
+// import { ReactComponent as MetaMaskIcon } from "src/assets/icons/metamask.svg";
 import { useEnvContext } from "src/contexts/env.context";
 import { useFormContext } from "src/contexts/form.context";
 import { useProvidersContext } from "src/contexts/providers.context";
 import { FormData, ModalState } from "src/domain";
 import { routes } from "src/routes";
-import { getPartiallyHiddenEthereumAddress } from "src/utils/addresses";
+// import { getPartiallyHiddenEthereumAddress } from "src/utils/addresses";
 import { BridgeForm } from "src/views/home/components/bridge-form/bridge-form.view";
 import { DepositWarningModal } from "src/views/home/components/deposit-warning-modal/deposit-warning-modal.view";
-import { Header } from "src/views/home/components/header/header.view";
+// import { Header } from "src/views/home/components/header/header.view";
 import { useHomeStyles } from "src/views/home/home.styles";
-import { NetworkBox } from "src/views/shared/network-box/network-box.view";
-import { Typography } from "src/views/shared/typography/typography.view";
+import { Navbar } from "src/views/shared/navbar/navbar.view";
+// import { NetworkBox } from "src/views/shared/network-box/network-box.view";
+// import { Typography } from "src/views/shared/typography/typography.view";
 
 export const Home = (): JSX.Element => {
   const classes = useHomeStyles();
@@ -58,18 +59,19 @@ export const Home = (): JSX.Element => {
 
   return (
     <div className={classes.contentWrapper}>
-      <Header />
+      <Navbar />
+      {/* <Header /> */}
       {connectedProvider.status === "successful" && (
         <>
-          <div className={classes.ethereumAddress}>
+          {/* <div className={classes.ethereumAddress}>
             <MetaMaskIcon className={classes.metaMaskIcon} />
             <Typography type="body1">
               {getPartiallyHiddenEthereumAddress(connectedProvider.data.account)}
             </Typography>
-          </div>
-          <div className={classes.networkBoxWrapper}>
+          </div> */}
+          {/* <div className={classes.networkBoxWrapper}>
             <NetworkBox />
-          </div>
+          </div> */}
           <BridgeForm
             account={connectedProvider.data.account}
             formData={formData}

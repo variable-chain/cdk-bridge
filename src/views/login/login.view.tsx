@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 
 import { routerStateParser } from "src/adapters/browser";
 import { getPolicyCheck, setPolicyCheck } from "src/adapters/storage";
-import { ReactComponent as PolygonZkEVMLogo } from "src/assets/polygon-zkevm-logo.svg";
+// import { ReactComponent as PolygonZkEVMLogo } from "src/assets/variable-logo.svg";
 import { useEnvContext } from "src/contexts/env.context";
 import { useProvidersContext } from "src/contexts/providers.context";
 import { EthereumChainId, PolicyCheck, WalletName } from "src/domain";
@@ -15,16 +15,19 @@ import { Card } from "src/views/shared/card/card.view";
 import { ConfirmationModal } from "src/views/shared/confirmation-modal/confirmation-modal.view";
 import { ErrorMessage } from "src/views/shared/error-message/error-message.view";
 import { InfoBanner } from "src/views/shared/info-banner/info-banner.view";
+import {Navbar} from "src/views/shared/navbar/navbar.view";
 import { NetworkBox } from "src/views/shared/network-box/network-box.view";
 import { Typography } from "src/views/shared/typography/typography.view";
 
 export const Login: FC = () => {
+  
   const classes = useLoginStyles();
   const [selectedWallet, setSelectedWallet] = useState<WalletName>();
   const [showPolicyModal, setShowPolicyModal] = useState(false);
   const navigate = useNavigate();
   const { state } = useLocation();
   const { connectedProvider, connectProvider } = useProvidersContext();
+  // console.log("connectedProvider.data.account) =", connectedProvider);
   const env = useEnvContext();
 
   const onConnectProvider = () => {
@@ -61,15 +64,16 @@ export const Login: FC = () => {
 
   const ethereumChain = env.chains[0];
   const deploymentName = getDeploymentName(ethereumChain);
-  const appName = deploymentName !== undefined ? `${deploymentName} Bridge` : "Bridge";
+  // const appName = deploymentName !== undefined ? `${deploymentName} Bridge` : "Bridge";
 
   return (
     <div className={classes.login}>
+      <Navbar />
       <div className={classes.contentWrapper}>
-        <PolygonZkEVMLogo className={classes.logo} />
-        <Typography className={classes.appName} type="body1">
+        {/* <PolygonZkEVMLogo className={classes.logo} /> */}
+        {/* <Typography className={classes.appName} type="body1">
           {appName}
-        </Typography>
+        </Typography> */}
         <div className={classes.networkBoxWrapper}>
           <NetworkBox />
         </div>
@@ -94,14 +98,14 @@ export const Login: FC = () => {
         <ConfirmationModal
           message={
             <Typography type="body1">
-              DISCLAIMER: This version of the Polygon zkEVM will require frequent maintenance and
+              DISCLAIMER: This version of the Variable CDK will require frequent maintenance and
               may be restarted if upgrades are needed.
             </Typography>
           }
           onClose={() => setShowPolicyModal(false)}
           onConfirm={onConnectProvider}
           showCancelButton={false}
-          title={`Welcome to the Polygon zkEVM ${deploymentName || ""}`}
+          title={`Welcome to the Variable CDK ${deploymentName || ""}`}
         />
       )}
     </div>

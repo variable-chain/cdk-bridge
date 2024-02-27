@@ -2,11 +2,12 @@ import { FC, useEffect } from "react";
 import { Navigate, useLocation, useNavigate } from "react-router-dom";
 
 import { providerError } from "src/adapters/error";
-import { ReactComponent as PolygonZkEVMLogo } from "src/assets/polygon-zkevm-logo.svg";
+import { ReactComponent as VariableLogo } from "src/assets/variable-logo.svg";
 import { useEnvContext } from "src/contexts/env.context";
 import { ProviderError } from "src/domain";
 import { routes } from "src/routes";
 import { useNetworkErrorStyles } from "src/views/network-error/network-error.styles";
+import { Navbar } from "src/views/shared/navbar/navbar.view";
 import { Typography } from "src/views/shared/typography/typography.view";
 
 export const NetworkError: FC = () => {
@@ -25,7 +26,8 @@ export const NetworkError: FC = () => {
 
   return parsedProviderError.success ? (
     <div className={classes.wrapper}>
-      <PolygonZkEVMLogo className={classes.logo} />
+      <Navbar />
+      <VariableLogo className={classes.logo} />
       <div className={classes.textBox}>
         <Typography type="h1">Network Error</Typography>
         <Typography type="body1">
