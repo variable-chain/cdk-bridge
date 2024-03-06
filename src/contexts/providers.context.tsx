@@ -84,7 +84,6 @@ const ProvidersProvider: FC<PropsWithChildren> = (props) => {
 
         const currentNetworkChainId = currentNetwork.chainId;
         const supportedChainIds = env.chains.map((chain) => chain.chainId);
-
         if (!supportedChainIds.includes(currentNetworkChainId)) {
           setConnectedProvider({
             error: `Switch your network to ${env.chains[0].name} or ${env.chains[1].name} to continue`,
@@ -234,6 +233,7 @@ const ProvidersProvider: FC<PropsWithChildren> = (props) => {
           new Error("No request method is available from the provider to add an Ethereum chain")
         );
       }
+      // console.log("chain.provider.connection.url",chain.provider.connection.url)
       return provider.provider
         .request({
           method: "wallet_addEthereumChain",

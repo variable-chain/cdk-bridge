@@ -13,24 +13,34 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "contract IPolygonZkEVMGlobalExitRootV2",
+        internalType: "contract IPolygonZkEVMGlobalExitRoot",
         name: "_globalExitRootManager",
         type: "address",
       },
       {
         internalType: "contract IERC20Upgradeable",
-        name: "_pol",
+        name: "_matic",
         type: "address",
       },
       {
-        internalType: "contract IPolygonZkEVMBridgeV2",
+        internalType: "contract IVerifierRollup",
+        name: "_rollupVerifier",
+        type: "address",
+      },
+      {
+        internalType: "contract IPolygonZkEVMBridge",
         name: "_bridgeAddress",
         type: "address",
       },
       {
-        internalType: "contract PolygonRollupManager",
-        name: "_rollupManager",
-        type: "address",
+        internalType: "uint64",
+        name: "_chainID",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "_forkID",
+        type: "uint64",
       },
     ],
     stateMutability: "nonpayable",
@@ -68,17 +78,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "ForceBatchNotAllowed",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "ForceBatchTimeoutNotExpired",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "ForceBatchesAlreadyActive",
     type: "error",
   },
   {
@@ -93,22 +93,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "GasTokenNetworkMustBeZeroOnEther",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "GlobalExitRootNotExist",
     type: "error",
   },
   {
     inputs: [],
     name: "HaltTimeoutNotExpired",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "HugeTokenMetadataNotSupported",
     type: "error",
   },
   {
@@ -123,22 +113,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "InvalidInitializeTransaction",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "InvalidProof",
     type: "error",
   },
   {
     inputs: [],
     name: "InvalidRangeBatchTimeTarget",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "InvalidRangeForceBatchTimeout",
     type: "error",
   },
   {
@@ -158,22 +138,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "NewStateRootNotInsidePrime",
-    type: "error",
-  },
-  {
-    inputs: [],
     name: "NewTrustedAggregatorTimeoutMustBeLower",
     type: "error",
   },
   {
     inputs: [],
     name: "NotEnoughMaticAmount",
-    type: "error",
-  },
-  {
-    inputs: [],
-    name: "NotEnoughPOLAmount",
     type: "error",
   },
   {
@@ -193,12 +163,17 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "OnlyPendingAdmin",
+    name: "OnlyEmergencyState",
     type: "error",
   },
   {
     inputs: [],
-    name: "OnlyRollupManager",
+    name: "OnlyNotEmergencyState",
+    type: "error",
+  },
+  {
+    inputs: [],
+    name: "OnlyPendingAdmin",
     type: "error",
   },
   {
@@ -281,8 +256,39 @@ const _abi = [
   },
   {
     anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint64",
+        name: "numBatch",
+        type: "uint64",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "stateRoot",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "uint64",
+        name: "pendingStateNum",
+        type: "uint64",
+      },
+    ],
+    name: "ConsolidatePendingState",
+    type: "event",
+  },
+  {
+    anonymous: false,
     inputs: [],
-    name: "ActivateForceBatches",
+    name: "EmergencyStateActivated",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [],
+    name: "EmergencyStateDeactivated",
     type: "event",
   },
   {
@@ -321,31 +327,6 @@ const _abi = [
     inputs: [
       {
         indexed: false,
-        internalType: "bytes",
-        name: "transactions",
-        type: "bytes",
-      },
-      {
-        indexed: false,
-        internalType: "bytes32",
-        name: "lastGlobalExitRoot",
-        type: "bytes32",
-      },
-      {
-        indexed: false,
-        internalType: "address",
-        name: "sequencer",
-        type: "address",
-      },
-    ],
-    name: "InitialSequenceBatches",
-    type: "event",
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
         internalType: "uint8",
         name: "version",
         type: "uint8",
@@ -366,8 +347,65 @@ const _abi = [
       {
         indexed: false,
         internalType: "bytes32",
-        name: "l1InfoRoot",
+        name: "stateRoot",
         type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "aggregator",
+        type: "address",
+      },
+    ],
+    name: "OverridePendingState",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "storedStateRoot",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "provedStateRoot",
+        type: "bytes32",
+      },
+    ],
+    name: "ProveNonDeterministicPendingState",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "uint64",
+        name: "numBatch",
+        type: "uint64",
       },
     ],
     name: "SequenceBatches",
@@ -391,12 +429,51 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint16",
+        name: "newMultiplierBatchFee",
+        type: "uint16",
+      },
+    ],
+    name: "SetMultiplierBatchFee",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "uint64",
-        name: "newforceBatchTimeout",
+        name: "newPendingStateTimeout",
         type: "uint64",
       },
     ],
-    name: "SetForceBatchTimeout",
+    name: "SetPendingStateTimeout",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "address",
+        name: "newTrustedAggregator",
+        type: "address",
+      },
+    ],
+    name: "SetTrustedAggregator",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "newTrustedAggregatorTimeout",
+        type: "uint64",
+      },
+    ],
+    name: "SetTrustedAggregatorTimeout",
     type: "event",
   },
   {
@@ -430,12 +507,50 @@ const _abi = [
     inputs: [
       {
         indexed: false,
+        internalType: "uint64",
+        name: "newVerifyBatchTimeTarget",
+        type: "uint64",
+      },
+    ],
+    name: "SetVerifyBatchTimeTarget",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
         internalType: "address",
         name: "newPendingAdmin",
         type: "address",
       },
     ],
     name: "TransferAdminRole",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "numBatch",
+        type: "uint64",
+      },
+      {
+        indexed: false,
+        internalType: "uint64",
+        name: "forkID",
+        type: "uint64",
+      },
+      {
+        indexed: false,
+        internalType: "string",
+        name: "version",
+        type: "string",
+      },
+    ],
+    name: "UpdateZkEVMVersion",
     type: "event",
   },
   {
@@ -464,160 +579,29 @@ const _abi = [
     type: "event",
   },
   {
-    inputs: [],
-    name: "GLOBAL_EXIT_ROOT_MANAGER_L2",
-    outputs: [
+    anonymous: false,
+    inputs: [
       {
-        internalType: "contract IBasePolygonZkEVMGlobalExitRoot",
-        name: "",
+        indexed: true,
+        internalType: "uint64",
+        name: "numBatch",
+        type: "uint64",
+      },
+      {
+        indexed: false,
+        internalType: "bytes32",
+        name: "stateRoot",
+        type: "bytes32",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "aggregator",
         type: "address",
       },
     ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_BRIDGE_LIST_LEN_LEN",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_BRIDGE_PARAMS",
-    outputs: [
-      {
-        internalType: "bytes",
-        name: "",
-        type: "bytes",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_BRIDGE_PARAMS_AFTER_BRIDGE_ADDRESS",
-    outputs: [
-      {
-        internalType: "bytes",
-        name: "",
-        type: "bytes",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_BRIDGE_PARAMS_AFTER_BRIDGE_ADDRESS_EMPTY_METADATA",
-    outputs: [
-      {
-        internalType: "bytes",
-        name: "",
-        type: "bytes",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_CONSTANT_BYTES",
-    outputs: [
-      {
-        internalType: "uint16",
-        name: "",
-        type: "uint16",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_CONSTANT_BYTES_EMPTY_METADATA",
-    outputs: [
-      {
-        internalType: "uint16",
-        name: "",
-        type: "uint16",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_DATA_LEN_EMPTY_METADATA",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "INITIALIZE_TX_EFFECTIVE_PERCENTAGE",
-    outputs: [
-      {
-        internalType: "bytes1",
-        name: "",
-        type: "bytes1",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "SIGNATURE_INITIALIZE_TX_R",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "SIGNATURE_INITIALIZE_TX_S",
-    outputs: [
-      {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "SIGNATURE_INITIALIZE_TX_V",
-    outputs: [
-      {
-        internalType: "uint8",
-        name: "",
-        type: "uint8",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
+    name: "VerifyBatchesTrustedAggregator",
+    type: "event",
   },
   {
     inputs: [],
@@ -627,8 +611,14 @@ const _abi = [
     type: "function",
   },
   {
-    inputs: [],
-    name: "activateForceBatches",
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "sequencedBatchNum",
+        type: "uint64",
+      },
+    ],
+    name: "activateEmergencyState",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -648,20 +638,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "bridgeAddress",
-    outputs: [
-      {
-        internalType: "contract IPolygonZkEVMBridgeV2",
-        name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "calculatePolPerForceBatch",
+    name: "batchFee",
     outputs: [
       {
         internalType: "uint256",
@@ -675,24 +652,51 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "bytes",
-        name: "transactions",
-        type: "bytes",
-      },
-      {
-        internalType: "uint256",
-        name: "polAmount",
-        type: "uint256",
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
       },
     ],
-    name: "forceBatch",
-    outputs: [],
-    stateMutability: "nonpayable",
+    name: "batchNumToStateRoot",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
     inputs: [],
-    name: "forceBatchTimeout",
+    name: "bridgeAddress",
+    outputs: [
+      {
+        internalType: "contract IPolygonZkEVMBridge",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "calculateRewardPerBatch",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "chainID",
     outputs: [
       {
         internalType: "uint64",
@@ -701,6 +705,44 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "pendingStateNum",
+        type: "uint64",
+      },
+    ],
+    name: "consolidatePendingState",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "deactivateEmergencyState",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes",
+        name: "transactions",
+        type: "bytes",
+      },
+      {
+        internalType: "uint256",
+        name: "maticAmount",
+        type: "uint256",
+      },
+    ],
+    name: "forceBatch",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
   {
@@ -724,7 +766,7 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "gapLastTimestamp",
+    name: "forkID",
     outputs: [
       {
         internalType: "uint64",
@@ -737,25 +779,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "gasTokenAddress",
+    name: "getCurrentBatchFee",
     outputs: [
       {
-        internalType: "address",
+        internalType: "uint256",
         name: "",
-        type: "address",
-      },
-    ],
-    stateMutability: "view",
-    type: "function",
-  },
-  {
-    inputs: [],
-    name: "gasTokenNetwork",
-    outputs: [
-      {
-        internalType: "uint32",
-        name: "",
-        type: "uint32",
+        type: "uint256",
       },
     ],
     stateMutability: "view",
@@ -764,32 +793,50 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "uint32",
-        name: "networkID",
-        type: "uint32",
+        internalType: "uint64",
+        name: "initNumBatch",
+        type: "uint64",
       },
       {
-        internalType: "address",
-        name: "_gasTokenAddress",
-        type: "address",
+        internalType: "uint64",
+        name: "finalNewBatch",
+        type: "uint64",
       },
       {
-        internalType: "uint32",
-        name: "_gasTokenNetwork",
-        type: "uint32",
+        internalType: "bytes32",
+        name: "newLocalExitRoot",
+        type: "bytes32",
       },
       {
-        internalType: "bytes",
-        name: "_gasTokenMetadata",
-        type: "bytes",
+        internalType: "bytes32",
+        name: "oldStateRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "newStateRoot",
+        type: "bytes32",
       },
     ],
-    name: "generateInitializeTransaction",
+    name: "getInputSnarkBytes",
     outputs: [
       {
         internalType: "bytes",
         name: "",
         type: "bytes",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "getLastVerifiedBatch",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
       },
     ],
     stateMutability: "view",
@@ -800,7 +847,7 @@ const _abi = [
     name: "globalExitRootManager",
     outputs: [
       {
-        internalType: "contract IPolygonZkEVMGlobalExitRootV2",
+        internalType: "contract IPolygonZkEVMGlobalExitRoot",
         name: "",
         type: "address",
       },
@@ -811,33 +858,55 @@ const _abi = [
   {
     inputs: [
       {
-        internalType: "address",
-        name: "_admin",
-        type: "address",
+        components: [
+          {
+            internalType: "address",
+            name: "admin",
+            type: "address",
+          },
+          {
+            internalType: "address",
+            name: "trustedSequencer",
+            type: "address",
+          },
+          {
+            internalType: "uint64",
+            name: "pendingStateTimeout",
+            type: "uint64",
+          },
+          {
+            internalType: "address",
+            name: "trustedAggregator",
+            type: "address",
+          },
+          {
+            internalType: "uint64",
+            name: "trustedAggregatorTimeout",
+            type: "uint64",
+          },
+        ],
+        internalType: "struct PolygonZkEVM.InitializePackedParameters",
+        name: "initializePackedParameters",
+        type: "tuple",
       },
       {
-        internalType: "address",
-        name: "sequencer",
-        type: "address",
-      },
-      {
-        internalType: "uint32",
-        name: "networkID",
-        type: "uint32",
-      },
-      {
-        internalType: "address",
-        name: "_gasTokenAddress",
-        type: "address",
+        internalType: "bytes32",
+        name: "genesisRoot",
+        type: "bytes32",
       },
       {
         internalType: "string",
-        name: "sequencerURL",
+        name: "_trustedSequencerURL",
         type: "string",
       },
       {
         internalType: "string",
         name: "_networkName",
+        type: "string",
+      },
+      {
+        internalType: "string",
+        name: "_version",
         type: "string",
       },
     ],
@@ -848,7 +917,26 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "isForcedBatchAllowed",
+    name: "isEmergencyState",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "pendingStateNum",
+        type: "uint64",
+      },
+    ],
+    name: "isPendingStateConsolidable",
     outputs: [
       {
         internalType: "bool",
@@ -861,12 +949,12 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "lastAccInputHash",
+    name: "lastBatchSequenced",
     outputs: [
       {
-        internalType: "bytes32",
+        internalType: "uint64",
         name: "",
-        type: "bytes32",
+        type: "uint64",
       },
     ],
     stateMutability: "view",
@@ -900,6 +988,84 @@ const _abi = [
   },
   {
     inputs: [],
+    name: "lastPendingState",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastPendingStateConsolidated",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastTimestamp",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "lastVerifiedBatch",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "matic",
+    outputs: [
+      {
+        internalType: "contract IERC20Upgradeable",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "multiplierBatchFee",
+    outputs: [
+      {
+        internalType: "uint16",
+        name: "",
+        type: "uint16",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
     name: "networkName",
     outputs: [
       {
@@ -915,8 +1081,28 @@ const _abi = [
     inputs: [
       {
         internalType: "uint64",
-        name: "lastVerifiedBatch",
+        name: "initPendingStateNum",
         type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "finalPendingStateNum",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "initNumBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "finalNewBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "newLocalExitRoot",
+        type: "bytes32",
       },
       {
         internalType: "bytes32",
@@ -924,14 +1110,37 @@ const _abi = [
         type: "bytes32",
       },
       {
+        internalType: "uint256[2]",
+        name: "proofA",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[2][2]",
+        name: "proofB",
+        type: "uint256[2][2]",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "proofC",
+        type: "uint256[2]",
+      },
+    ],
+    name: "overridePendingState",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
         internalType: "address",
-        name: "aggregator",
+        name: "",
         type: "address",
       },
     ],
-    name: "onVerifyBatches",
-    outputs: [],
-    stateMutability: "nonpayable",
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -949,23 +1158,117 @@ const _abi = [
   },
   {
     inputs: [],
-    name: "pol",
+    name: "pendingStateTimeout",
     outputs: [
       {
-        internalType: "contract IERC20Upgradeable",
+        internalType: "uint64",
         name: "",
-        type: "address",
+        type: "uint64",
       },
     ],
     stateMutability: "view",
     type: "function",
   },
   {
-    inputs: [],
-    name: "rollupManager",
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    name: "pendingStateTransitions",
     outputs: [
       {
-        internalType: "contract PolygonRollupManager",
+        internalType: "uint64",
+        name: "timestamp",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "lastVerifiedBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "exitRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "stateRoot",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "initPendingStateNum",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "finalPendingStateNum",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "initNumBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "finalNewBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "newLocalExitRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "newStateRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "proofA",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[2][2]",
+        name: "proofB",
+        type: "uint256[2][2]",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "proofC",
+        type: "uint256[2]",
+      },
+    ],
+    name: "proveNonDeterministicPendingState",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "rollupVerifier",
+    outputs: [
+      {
+        internalType: "contract IVerifierRollup",
         name: "",
         type: "address",
       },
@@ -984,27 +1287,27 @@ const _abi = [
           },
           {
             internalType: "bytes32",
-            name: "forcedGlobalExitRoot",
+            name: "globalExitRoot",
             type: "bytes32",
           },
           {
             internalType: "uint64",
-            name: "forcedTimestamp",
+            name: "timestamp",
             type: "uint64",
           },
           {
-            internalType: "bytes32",
-            name: "forcedBlockHashL1",
-            type: "bytes32",
+            internalType: "uint64",
+            name: "minForcedTimestamp",
+            type: "uint64",
           },
         ],
-        internalType: "struct PolygonRollupBaseEtrog.BatchData[]",
+        internalType: "struct PolygonZkEVM.BatchData[]",
         name: "batches",
         type: "tuple[]",
       },
       {
         internalType: "address",
-        name: "l2Coinbase",
+        name: "feeRecipient",
         type: "address",
       },
     ],
@@ -1024,21 +1327,16 @@ const _abi = [
           },
           {
             internalType: "bytes32",
-            name: "forcedGlobalExitRoot",
+            name: "globalExitRoot",
             type: "bytes32",
           },
           {
             internalType: "uint64",
-            name: "forcedTimestamp",
+            name: "minForcedTimestamp",
             type: "uint64",
           },
-          {
-            internalType: "bytes32",
-            name: "forcedBlockHashL1",
-            type: "bytes32",
-          },
         ],
-        internalType: "struct PolygonRollupBaseEtrog.BatchData[]",
+        internalType: "struct PolygonZkEVM.ForcedBatchData[]",
         name: "batches",
         type: "tuple[]",
       },
@@ -1052,11 +1350,79 @@ const _abi = [
     inputs: [
       {
         internalType: "uint64",
-        name: "newforceBatchTimeout",
+        name: "",
         type: "uint64",
       },
     ],
-    name: "setForceBatchTimeout",
+    name: "sequencedBatches",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "accInputHash",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint64",
+        name: "sequencedTimestamp",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "previousLastBatchSequenced",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint16",
+        name: "newMultiplierBatchFee",
+        type: "uint16",
+      },
+    ],
+    name: "setMultiplierBatchFee",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "newPendingStateTimeout",
+        type: "uint64",
+      },
+    ],
+    name: "setPendingStateTimeout",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newTrustedAggregator",
+        type: "address",
+      },
+    ],
+    name: "setTrustedAggregator",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "newTrustedAggregatorTimeout",
+        type: "uint64",
+      },
+    ],
+    name: "setTrustedAggregatorTimeout",
     outputs: [],
     stateMutability: "nonpayable",
     type: "function",
@@ -1090,6 +1456,19 @@ const _abi = [
   {
     inputs: [
       {
+        internalType: "uint64",
+        name: "newVerifyBatchTimeTarget",
+        type: "uint64",
+      },
+    ],
+    name: "setVerifyBatchTimeTarget",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
         internalType: "address",
         name: "newPendingAdmin",
         type: "address",
@@ -1098,6 +1477,45 @@ const _abi = [
     name: "transferAdminRole",
     outputs: [],
     stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "transferOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "trustedAggregator",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "trustedAggregatorTimeout",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
     type: "function",
   },
   {
@@ -1124,6 +1542,115 @@ const _abi = [
       },
     ],
     stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "verifyBatchTimeTarget",
+    outputs: [
+      {
+        internalType: "uint64",
+        name: "",
+        type: "uint64",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "pendingStateNum",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "initNumBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "finalNewBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "newLocalExitRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "newStateRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "proofA",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[2][2]",
+        name: "proofB",
+        type: "uint256[2][2]",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "proofC",
+        type: "uint256[2]",
+      },
+    ],
+    name: "verifyBatches",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint64",
+        name: "pendingStateNum",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "initNumBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "uint64",
+        name: "finalNewBatch",
+        type: "uint64",
+      },
+      {
+        internalType: "bytes32",
+        name: "newLocalExitRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "newStateRoot",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "proofA",
+        type: "uint256[2]",
+      },
+      {
+        internalType: "uint256[2][2]",
+        name: "proofB",
+        type: "uint256[2][2]",
+      },
+      {
+        internalType: "uint256[2]",
+        name: "proofC",
+        type: "uint256[2]",
+      },
+    ],
+    name: "verifyBatchesTrustedAggregator",
+    outputs: [],
+    stateMutability: "nonpayable",
     type: "function",
   },
 ] as const;

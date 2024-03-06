@@ -23,7 +23,6 @@ export interface CommonChain {
 export type EthereumChain = CommonChain & {
   key: "ethereum";
   poeContractAddress: string;
-  rollupManagerAddress: string;
 };
 
 export type ZkEVMChain = CommonChain & {
@@ -150,7 +149,6 @@ interface BridgeCommonFields {
   destinationAddress: string;
   fiatAmount: BigNumber | undefined;
   from: Chain;
-  globalIndex: string;
   id: string;
   to: Chain;
   token: Token;
@@ -199,7 +197,6 @@ export interface Deposit {
   destinationAddress: string;
   fiatAmount: BigNumber | undefined;
   from: Chain;
-  globalIndex: string;
   to: Chain;
   token: Token;
   tokenOriginNetwork: number;
@@ -209,7 +206,6 @@ export interface MerkleProof {
   mainExitRoot: string;
   merkleProof: string[];
   rollupExitRoot: string;
-  rollupMerkleProof: string[];
 }
 
 export interface FormData {

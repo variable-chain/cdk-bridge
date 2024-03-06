@@ -8,7 +8,7 @@ import { useEnvContext } from "src/contexts/env.context";
 import { useErrorContext } from "src/contexts/error.context";
 import { useProvidersContext } from "src/contexts/providers.context";
 import { useUIContext } from "src/contexts/ui.context";
-import { Message } from "src/domain";
+import { Message, WalletName } from "src/domain";
 import { useCallIfMounted } from "src/hooks/use-call-if-mounted";
 import { isAsyncTaskDataAvailable, isMetaMaskUserRejectedRequestError } from "src/utils/types";
 import { Card } from "src/views/shared/card/card.view";
@@ -19,7 +19,7 @@ import { Typography } from "src/views/shared/typography/typography.view";
 export const NetworkBox: FC = () => {
   const classes = useNetworkBoxStyles();
   const env = useEnvContext();
-  const { addNetwork, connectedProvider } = useProvidersContext();
+  const { addNetwork, connectedProvider, connectProvider } = useProvidersContext();
   const [isAddNetworkButtonDisabled, setIsAddNetworkButtonDisabled] = useState(false);
   const { openSnackbar } = useUIContext();
   const callIfMounted = useCallIfMounted();
@@ -39,28 +39,78 @@ export const NetworkBox: FC = () => {
 
   const onAddNetwork = (): void => {
     setIsAddNetworkButtonDisabled(true);
-    addNetwork(polygonZkEVMChain)
-      .then(() => {
-        callIfMounted(() => {
-          openSnackbar(successMsg);
+  
+    if (window.ethereum) {
+      window.ethereum.request({ method: "eth_accounts" })
+        .then((accounts: string[]) => {
+          if (accounts.length === 0) {
+            // MetaMask is locked, prompt user to unlock
+            console.log("MetaMask is locked. Please unlock MetaMask.");
+            // Refresh accounts after switching network
+            window.ethereum.request({ method: "eth_requestAccounts" })
+            .then(() => {
+              console.log("Refreshed accounts after switching network");
+            })
+            .catch((error) => {
+              console.error("Error refreshing accounts:", error);
+            });
+            // You can show a message to the user or trigger a login modal.
+          } else {
+            
+            // MetaMask is unlocked, proceed with adding and switching network
+            addNetwork(polygonZkEVMChain)
+              .then(() => {
+                callIfMounted(() => {
+                  openSnackbar(successMsg);
+  
+                  // Switch network after it has been added
+                  window.ethereum.request({
+                      method: "wallet_switchEthereumChain",
+                      params: [{ chainId: `0x${polygonZkEVMChain.chainId.toString(16)}` }],
+                    })
+                    .then(() => {
+                      console.log("Switched to the added network");
+  
+                      // Refresh accounts after switching network
+                      window.ethereum.request({ method: "eth_requestAccounts" })
+                        .then((e) => {
+                          console.log("connectedProvider.status =", connectedProvider.status);
+                          console.log("Refreshed accounts after switching network", e);
+                          void connectProvider(WalletName.METAMASK);
+                        })
+                        .catch((error) => {
+                          console.error("Error refreshing accounts:", error);
+                        });
+                    })
+                    .catch((error) => {
+                      console.error("Error switching network:", error);
+                    });
+                });
+              })
+              .catch((error) => {
+                callIfMounted(() => {
+                  void parseError(error).then((parsed) => {
+                    if (parsed === "wrong-network") {
+                      openSnackbar(successMsg);
+                    } else if (isMetaMaskUserRejectedRequestError(error) === false) {
+                      notifyError(error);
+                    }
+                  });
+                });
+              })
+              .finally(() => {
+                callIfMounted(() => {
+                  setIsAddNetworkButtonDisabled(false);
+                });
+              });
+          }
+        })
+        .catch((error) => {
+          console.error("Error checking MetaMask accounts:", error);
         });
-      })
-      .catch((error) => {
-        callIfMounted(() => {
-          void parseError(error).then((parsed) => {
-            if (parsed === "wrong-network") {
-              openSnackbar(successMsg);
-            } else if (isMetaMaskUserRejectedRequestError(error) === false) {
-              notifyError(error);
-            }
-          });
-        });
-      })
-      .finally(() => {
-        callIfMounted(() => {
-          setIsAddNetworkButtonDisabled(false);
-        });
-      });
+    } else {
+      console.error("MetaMask not detected.");
+    }
   };
 
   return (

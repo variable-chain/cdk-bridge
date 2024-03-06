@@ -1,9 +1,12 @@
 #/bin/bash
 
-BASE_PATH="src/types/contracts"
+BASE_PATH="/home/desire/Projects/Variable/cdk-bridge/src/types/contracts"
 
 # Clean up
 rm -rf $BASE_PATH
+
+# Install typechain globally
+npm install -g typechain
 
 # Generate Price Oracle contract types
 npx typechain --target ethers-v5 --out-dir $BASE_PATH/uniswap-v2-router-02 "abis/uniswap-v2-router-02.json"
@@ -12,7 +15,6 @@ npx typechain --target ethers-v5 --out-dir $BASE_PATH/uniswap-v2-pair "abis/unis
 # Generate zkEVM contract types
 npx typechain --target ethers-v5 --out-dir $BASE_PATH/bridge "abis/bridge.json"
 npx typechain --target ethers-v5 --out-dir $BASE_PATH/proof-of-efficiency "abis/proof-of-efficiency.json"
-npx typechain --target ethers-v5 --out-dir $BASE_PATH/rollup-manager "abis/rollup-manager.json"
 
 # Generate ERC-20 contract types
 npx typechain --target ethers-v5 --out-dir $BASE_PATH/erc-20 "abis/erc-20.json"

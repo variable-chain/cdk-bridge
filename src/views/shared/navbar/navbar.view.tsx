@@ -1,5 +1,5 @@
 // navbar.view.tsx
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { NavLink } from "react-router-dom";
 import { Typography } from "../typography/typography.view";
 import { parseError } from "src/adapters/error";
@@ -9,16 +9,16 @@ import { useEnvContext } from "src/contexts/env.context";
 import { useErrorContext } from "src/contexts/error.context";
 import { useProvidersContext } from "src/contexts/providers.context";
 import { useUIContext } from "src/contexts/ui.context";
-import { Message } from "src/domain";
+import { Message, WalletName } from "src/domain";
 import { useCallIfMounted } from "src/hooks/use-call-if-mounted";
 import { getPartiallyHiddenEthereumAddress } from "src/utils/addresses";
 import { isAsyncTaskDataAvailable, isMetaMaskUserRejectedRequestError } from "src/utils/types";
 import { useNavbarStyles } from "src/views/shared/navbar/navbar.styles";
 
 export const Navbar = (): JSX.Element => {
+
   const classes = useNavbarStyles();
-  const { addNetwork, connectedProvider } = useProvidersContext();
-  const [connectionStatus, setConnectionStatus] = useState(false);
+  const { addNetwork, connectedProvider, connectProvider } = useProvidersContext();
   const env = useEnvContext();
   const { openSnackbar } = useUIContext();
   const callIfMounted = useCallIfMounted();
@@ -29,22 +29,13 @@ export const Navbar = (): JSX.Element => {
   }
   const polygonZkEVMChain = env.chains[1];
 
-  useEffect(() => {
-    if (connectedProvider.status === "successful") {
-      console.log("connectedProvider.status =", connectedProvider.status);
-      // You can trigger any UI update here as needed
-    }
-  }, [connectedProvider])
-  
-
   const successMsg: Message = {
     text: `${polygonZkEVMChain.name} network successfully added`,
     type: "success-msg",
   };
-  // ... (existing code)
 
 const onAddNetwork = (): void => {
-  // setIsAddNetworkButtonDisabled(true);
+  setIsAddNetworkButtonDisabled(true);
 
   if (window.ethereum) {
     window.ethereum.request({ method: "eth_accounts" })
@@ -55,16 +46,13 @@ const onAddNetwork = (): void => {
           // Refresh accounts after switching network
           window.ethereum.request({ method: "eth_requestAccounts" })
           .then(() => {
-            console.log("connectedProvider.status =", connectedProvider.status);
-            
             console.log("Refreshed accounts after switching network");
           })
-          .catch((error) => {
+          .catch((error: any) => {
             console.error("Error refreshing accounts:", error);
           });
           // You can show a message to the user or trigger a login modal.
         } else {
-          console.log("testunggakslbfvb");
           
           // MetaMask is unlocked, proceed with adding and switching network
           addNetwork(polygonZkEVMChain)
@@ -82,15 +70,16 @@ const onAddNetwork = (): void => {
 
                     // Refresh accounts after switching network
                     window.ethereum.request({ method: "eth_requestAccounts" })
-                      .then(() => {
+                      .then((e: any) => {
                         console.log("connectedProvider.status =", connectedProvider.status);
-                        console.log("Refreshed accounts after switching network");
+                        console.log("Refreshed accounts after switching network", e);
+                        void connectProvider(WalletName.METAMASK);
                       })
-                      .catch((error) => {
+                      .catch((error: any) => {
                         console.error("Error refreshing accounts:", error);
                       });
                   })
-                  .catch((error) => {
+                  .catch((error: any) => {
                     console.error("Error switching network:", error);
                   });
               });
@@ -113,7 +102,7 @@ const onAddNetwork = (): void => {
             });
         }
       })
-      .catch((error) => {
+      .catch((error: any) => {
         console.error("Error checking MetaMask accounts:", error);
       });
   } else {
@@ -123,7 +112,9 @@ const onAddNetwork = (): void => {
 
   return (
     <div className={classes.navbar_container}>
+      <NavLink to="/">
       <VariableLogo className={classes.logo} />
+      </NavLink>
       <div className={classes.links}>
         {/* <NavLink activeClassName="active" style={{ color: 'white' }} to="/activity">
         Transfer</NavLink>

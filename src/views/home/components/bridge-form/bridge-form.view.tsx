@@ -311,12 +311,7 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
             value={amount}
           />
         </div>
-      </Card>
-      <div className={classes.arrowRow}>
-        <ArrowDown className={classes.arrowDownIcon} />
-      </div>
-      <Card className={classes.card}>
-        <div className={classes.row}>
+        <div className={classes.row} style={{marginTop:"50px"}}>
           <div className={classes.leftBox}>
             <Typography type="body2">To</Typography>
             <div className={classes.toChain}>
@@ -333,13 +328,19 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
             />
           </div>
         </div>
-      </Card>
+      {/*</Card>*/}
       <div className={classes.button}>
         <Button disabled={!amount || amount.isZero() || inputError !== undefined} type="submit">
           Continue
         </Button>
         {amount && inputError && <ErrorMessage error={inputError} />}
       </div>
+      </Card>
+      {/*<div className={classes.arrowRow}>
+        <ArrowDown className={classes.arrowDownIcon} />
+      </div>*
+      <Card className={classes.card}>*/}
+        
       {chains && (
         <ChainList
           chains={chains}

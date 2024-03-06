@@ -30,32 +30,24 @@ import type {
 
 export interface BridgeInterface extends utils.Interface {
   functions: {
-    "WETHToken()": FunctionFragment;
     "activateEmergencyState()": FunctionFragment;
     "bridgeAsset(uint32,address,uint256,address,bool,bytes)": FunctionFragment;
     "bridgeMessage(uint32,address,bool,bytes)": FunctionFragment;
-    "bridgeMessageWETH(uint32,address,uint256,bool,bytes)": FunctionFragment;
-    "calculateRoot(bytes32,bytes32[32],uint32)": FunctionFragment;
-    "calculateTokenWrapperAddress(uint32,address,address)": FunctionFragment;
-    "claimAsset(bytes32[32],bytes32[32],uint256,bytes32,bytes32,uint32,address,uint32,address,uint256,bytes)": FunctionFragment;
-    "claimMessage(bytes32[32],bytes32[32],uint256,bytes32,bytes32,uint32,address,uint32,address,uint256,bytes)": FunctionFragment;
+    "claimAsset(bytes32[32],uint32,bytes32,bytes32,uint32,address,uint32,address,uint256,bytes)": FunctionFragment;
+    "claimMessage(bytes32[32],uint32,bytes32,bytes32,uint32,address,uint32,address,uint256,bytes)": FunctionFragment;
     "claimedBitMap(uint256)": FunctionFragment;
     "deactivateEmergencyState()": FunctionFragment;
     "depositCount()": FunctionFragment;
-    "gasTokenAddress()": FunctionFragment;
-    "gasTokenMetadata()": FunctionFragment;
-    "gasTokenNetwork()": FunctionFragment;
+    "getDepositRoot()": FunctionFragment;
     "getLeafValue(uint8,uint32,address,uint32,address,uint256,bytes32)": FunctionFragment;
-    "getRoot()": FunctionFragment;
-    "getTokenMetadata(address)": FunctionFragment;
     "getTokenWrappedAddress(uint32,address)": FunctionFragment;
     "globalExitRootManager()": FunctionFragment;
-    "initialize(uint32,address,uint32,address,address,bytes)": FunctionFragment;
-    "isClaimed(uint32,uint32)": FunctionFragment;
+    "initialize(uint32,address,address)": FunctionFragment;
+    "isClaimed(uint256)": FunctionFragment;
     "isEmergencyState()": FunctionFragment;
     "lastUpdatedDepositCount()": FunctionFragment;
     "networkID()": FunctionFragment;
-    "polygonRollupManager()": FunctionFragment;
+    "polygonZkEVMaddress()": FunctionFragment;
     "precalculatedWrapperAddress(uint32,address,string,string,uint8)": FunctionFragment;
     "tokenInfoToWrappedToken(bytes32)": FunctionFragment;
     "updateGlobalExitRoot()": FunctionFragment;
@@ -65,24 +57,16 @@ export interface BridgeInterface extends utils.Interface {
 
   getFunction(
     nameOrSignatureOrTopic:
-      | "WETHToken"
       | "activateEmergencyState"
       | "bridgeAsset"
       | "bridgeMessage"
-      | "bridgeMessageWETH"
-      | "calculateRoot"
-      | "calculateTokenWrapperAddress"
       | "claimAsset"
       | "claimMessage"
       | "claimedBitMap"
       | "deactivateEmergencyState"
       | "depositCount"
-      | "gasTokenAddress"
-      | "gasTokenMetadata"
-      | "gasTokenNetwork"
+      | "getDepositRoot"
       | "getLeafValue"
-      | "getRoot"
-      | "getTokenMetadata"
       | "getTokenWrappedAddress"
       | "globalExitRootManager"
       | "initialize"
@@ -90,7 +74,7 @@ export interface BridgeInterface extends utils.Interface {
       | "isEmergencyState"
       | "lastUpdatedDepositCount"
       | "networkID"
-      | "polygonRollupManager"
+      | "polygonZkEVMaddress"
       | "precalculatedWrapperAddress"
       | "tokenInfoToWrappedToken"
       | "updateGlobalExitRoot"
@@ -98,7 +82,6 @@ export interface BridgeInterface extends utils.Interface {
       | "wrappedTokenToTokenInfo"
   ): FunctionFragment;
 
-  encodeFunctionData(functionFragment: "WETHToken", values?: undefined): string;
   encodeFunctionData(
     functionFragment: "activateEmergencyState",
     values?: undefined
@@ -124,35 +107,8 @@ export interface BridgeInterface extends utils.Interface {
     ]
   ): string;
   encodeFunctionData(
-    functionFragment: "bridgeMessageWETH",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<boolean>,
-      PromiseOrValue<BytesLike>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "calculateRoot",
-    values: [
-      PromiseOrValue<BytesLike>,
-      PromiseOrValue<BytesLike>[],
-      PromiseOrValue<BigNumberish>
-    ]
-  ): string;
-  encodeFunctionData(
-    functionFragment: "calculateTokenWrapperAddress",
-    values: [
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>
-    ]
-  ): string;
-  encodeFunctionData(
     functionFragment: "claimAsset",
     values: [
-      PromiseOrValue<BytesLike>[],
       PromiseOrValue<BytesLike>[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>,
@@ -168,7 +124,6 @@ export interface BridgeInterface extends utils.Interface {
   encodeFunctionData(
     functionFragment: "claimMessage",
     values: [
-      PromiseOrValue<BytesLike>[],
       PromiseOrValue<BytesLike>[],
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<BytesLike>,
@@ -194,15 +149,7 @@ export interface BridgeInterface extends utils.Interface {
     values?: undefined
   ): string;
   encodeFunctionData(
-    functionFragment: "gasTokenAddress",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gasTokenMetadata",
-    values?: undefined
-  ): string;
-  encodeFunctionData(
-    functionFragment: "gasTokenNetwork",
+    functionFragment: "getDepositRoot",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -217,11 +164,6 @@ export interface BridgeInterface extends utils.Interface {
       PromiseOrValue<BytesLike>
     ]
   ): string;
-  encodeFunctionData(functionFragment: "getRoot", values?: undefined): string;
-  encodeFunctionData(
-    functionFragment: "getTokenMetadata",
-    values: [PromiseOrValue<string>]
-  ): string;
   encodeFunctionData(
     functionFragment: "getTokenWrappedAddress",
     values: [PromiseOrValue<BigNumberish>, PromiseOrValue<string>]
@@ -235,15 +177,12 @@ export interface BridgeInterface extends utils.Interface {
     values: [
       PromiseOrValue<BigNumberish>,
       PromiseOrValue<string>,
-      PromiseOrValue<BigNumberish>,
-      PromiseOrValue<string>,
-      PromiseOrValue<string>,
-      PromiseOrValue<BytesLike>
+      PromiseOrValue<string>
     ]
   ): string;
   encodeFunctionData(
     functionFragment: "isClaimed",
-    values: [PromiseOrValue<BigNumberish>, PromiseOrValue<BigNumberish>]
+    values: [PromiseOrValue<BigNumberish>]
   ): string;
   encodeFunctionData(
     functionFragment: "isEmergencyState",
@@ -255,7 +194,7 @@ export interface BridgeInterface extends utils.Interface {
   ): string;
   encodeFunctionData(functionFragment: "networkID", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: "polygonRollupManager",
+    functionFragment: "polygonZkEVMaddress",
     values?: undefined
   ): string;
   encodeFunctionData(
@@ -290,7 +229,6 @@ export interface BridgeInterface extends utils.Interface {
     values: [PromiseOrValue<string>]
   ): string;
 
-  decodeFunctionResult(functionFragment: "WETHToken", data: BytesLike): Result;
   decodeFunctionResult(
     functionFragment: "activateEmergencyState",
     data: BytesLike
@@ -301,18 +239,6 @@ export interface BridgeInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(
     functionFragment: "bridgeMessage",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "bridgeMessageWETH",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "calculateRoot",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "calculateTokenWrapperAddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(functionFragment: "claimAsset", data: BytesLike): Result;
@@ -333,24 +259,11 @@ export interface BridgeInterface extends utils.Interface {
     data: BytesLike
   ): Result;
   decodeFunctionResult(
-    functionFragment: "gasTokenAddress",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "gasTokenMetadata",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(
-    functionFragment: "gasTokenNetwork",
+    functionFragment: "getDepositRoot",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
     functionFragment: "getLeafValue",
-    data: BytesLike
-  ): Result;
-  decodeFunctionResult(functionFragment: "getRoot", data: BytesLike): Result;
-  decodeFunctionResult(
-    functionFragment: "getTokenMetadata",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -373,7 +286,7 @@ export interface BridgeInterface extends utils.Interface {
   ): Result;
   decodeFunctionResult(functionFragment: "networkID", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: "polygonRollupManager",
+    functionFragment: "polygonZkEVMaddress",
     data: BytesLike
   ): Result;
   decodeFunctionResult(
@@ -399,7 +312,7 @@ export interface BridgeInterface extends utils.Interface {
 
   events: {
     "BridgeEvent(uint8,uint32,address,uint32,address,uint256,bytes,uint32)": EventFragment;
-    "ClaimEvent(uint256,uint32,address,address,uint256)": EventFragment;
+    "ClaimEvent(uint32,uint32,address,address,uint256)": EventFragment;
     "EmergencyStateActivated()": EventFragment;
     "EmergencyStateDeactivated()": EventFragment;
     "Initialized(uint8)": EventFragment;
@@ -432,14 +345,14 @@ export type BridgeEventEvent = TypedEvent<
 export type BridgeEventEventFilter = TypedEventFilter<BridgeEventEvent>;
 
 export interface ClaimEventEventObject {
-  globalIndex: BigNumber;
+  index: number;
   originNetwork: number;
   originAddress: string;
   destinationAddress: string;
   amount: BigNumber;
 }
 export type ClaimEventEvent = TypedEvent<
-  [BigNumber, number, string, string, BigNumber],
+  [number, number, string, string, BigNumber],
   ClaimEventEventObject
 >;
 
@@ -510,8 +423,6 @@ export interface Bridge extends BaseContract {
   removeListener: OnEvent<this>;
 
   functions: {
-    WETHToken(overrides?: CallOverrides): Promise<[string]>;
-
     activateEmergencyState(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
@@ -534,33 +445,9 @@ export interface Bridge extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
-    bridgeMessageWETH(
-      destinationNetwork: PromiseOrValue<BigNumberish>,
-      destinationAddress: PromiseOrValue<string>,
-      amountWETH: PromiseOrValue<BigNumberish>,
-      forceUpdateGlobalExitRoot: PromiseOrValue<boolean>,
-      metadata: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<ContractTransaction>;
-
-    calculateRoot(
-      leafHash: PromiseOrValue<BytesLike>,
+    claimAsset(
       smtProof: PromiseOrValue<BytesLike>[],
       index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    calculateTokenWrapperAddress(
-      originNetwork: PromiseOrValue<BigNumberish>,
-      originTokenAddress: PromiseOrValue<string>,
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    claimAsset(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -573,9 +460,8 @@ export interface Bridge extends BaseContract {
     ): Promise<ContractTransaction>;
 
     claimMessage(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
+      smtProof: PromiseOrValue<BytesLike>[],
+      index: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -598,11 +484,7 @@ export interface Bridge extends BaseContract {
 
     depositCount(overrides?: CallOverrides): Promise<[BigNumber]>;
 
-    gasTokenAddress(overrides?: CallOverrides): Promise<[string]>;
-
-    gasTokenMetadata(overrides?: CallOverrides): Promise<[string]>;
-
-    gasTokenNetwork(overrides?: CallOverrides): Promise<[number]>;
+    getDepositRoot(overrides?: CallOverrides): Promise<[string]>;
 
     getLeafValue(
       leafType: PromiseOrValue<BigNumberish>,
@@ -612,13 +494,6 @@ export interface Bridge extends BaseContract {
       destinationAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       metadataHash: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<[string]>;
-
-    getRoot(overrides?: CallOverrides): Promise<[string]>;
-
-    getTokenMetadata(
-      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<[string]>;
 
@@ -632,17 +507,13 @@ export interface Bridge extends BaseContract {
 
     initialize(
       _networkID: PromiseOrValue<BigNumberish>,
-      _gasTokenAddress: PromiseOrValue<string>,
-      _gasTokenNetwork: PromiseOrValue<BigNumberish>,
       _globalExitRootManager: PromiseOrValue<string>,
-      _polygonRollupManager: PromiseOrValue<string>,
-      _gasTokenMetadata: PromiseOrValue<BytesLike>,
+      _polygonZkEVMaddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<ContractTransaction>;
 
     isClaimed(
-      leafIndex: PromiseOrValue<BigNumberish>,
-      sourceBridgeNetwork: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<[boolean]>;
 
@@ -652,7 +523,7 @@ export interface Bridge extends BaseContract {
 
     networkID(overrides?: CallOverrides): Promise<[number]>;
 
-    polygonRollupManager(overrides?: CallOverrides): Promise<[string]>;
+    polygonZkEVMaddress(overrides?: CallOverrides): Promise<[string]>;
 
     precalculatedWrapperAddress(
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -688,8 +559,6 @@ export interface Bridge extends BaseContract {
     >;
   };
 
-  WETHToken(overrides?: CallOverrides): Promise<string>;
-
   activateEmergencyState(
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
@@ -712,33 +581,9 @@ export interface Bridge extends BaseContract {
     overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
-  bridgeMessageWETH(
-    destinationNetwork: PromiseOrValue<BigNumberish>,
-    destinationAddress: PromiseOrValue<string>,
-    amountWETH: PromiseOrValue<BigNumberish>,
-    forceUpdateGlobalExitRoot: PromiseOrValue<boolean>,
-    metadata: PromiseOrValue<BytesLike>,
-    overrides?: Overrides & { from?: PromiseOrValue<string> }
-  ): Promise<ContractTransaction>;
-
-  calculateRoot(
-    leafHash: PromiseOrValue<BytesLike>,
+  claimAsset(
     smtProof: PromiseOrValue<BytesLike>[],
     index: PromiseOrValue<BigNumberish>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  calculateTokenWrapperAddress(
-    originNetwork: PromiseOrValue<BigNumberish>,
-    originTokenAddress: PromiseOrValue<string>,
-    token: PromiseOrValue<string>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  claimAsset(
-    smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-    smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-    globalIndex: PromiseOrValue<BigNumberish>,
     mainnetExitRoot: PromiseOrValue<BytesLike>,
     rollupExitRoot: PromiseOrValue<BytesLike>,
     originNetwork: PromiseOrValue<BigNumberish>,
@@ -751,9 +596,8 @@ export interface Bridge extends BaseContract {
   ): Promise<ContractTransaction>;
 
   claimMessage(
-    smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-    smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-    globalIndex: PromiseOrValue<BigNumberish>,
+    smtProof: PromiseOrValue<BytesLike>[],
+    index: PromiseOrValue<BigNumberish>,
     mainnetExitRoot: PromiseOrValue<BytesLike>,
     rollupExitRoot: PromiseOrValue<BytesLike>,
     originNetwork: PromiseOrValue<BigNumberish>,
@@ -776,11 +620,7 @@ export interface Bridge extends BaseContract {
 
   depositCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-  gasTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-  gasTokenMetadata(overrides?: CallOverrides): Promise<string>;
-
-  gasTokenNetwork(overrides?: CallOverrides): Promise<number>;
+  getDepositRoot(overrides?: CallOverrides): Promise<string>;
 
   getLeafValue(
     leafType: PromiseOrValue<BigNumberish>,
@@ -790,13 +630,6 @@ export interface Bridge extends BaseContract {
     destinationAddress: PromiseOrValue<string>,
     amount: PromiseOrValue<BigNumberish>,
     metadataHash: PromiseOrValue<BytesLike>,
-    overrides?: CallOverrides
-  ): Promise<string>;
-
-  getRoot(overrides?: CallOverrides): Promise<string>;
-
-  getTokenMetadata(
-    token: PromiseOrValue<string>,
     overrides?: CallOverrides
   ): Promise<string>;
 
@@ -810,17 +643,13 @@ export interface Bridge extends BaseContract {
 
   initialize(
     _networkID: PromiseOrValue<BigNumberish>,
-    _gasTokenAddress: PromiseOrValue<string>,
-    _gasTokenNetwork: PromiseOrValue<BigNumberish>,
     _globalExitRootManager: PromiseOrValue<string>,
-    _polygonRollupManager: PromiseOrValue<string>,
-    _gasTokenMetadata: PromiseOrValue<BytesLike>,
+    _polygonZkEVMaddress: PromiseOrValue<string>,
     overrides?: Overrides & { from?: PromiseOrValue<string> }
   ): Promise<ContractTransaction>;
 
   isClaimed(
-    leafIndex: PromiseOrValue<BigNumberish>,
-    sourceBridgeNetwork: PromiseOrValue<BigNumberish>,
+    index: PromiseOrValue<BigNumberish>,
     overrides?: CallOverrides
   ): Promise<boolean>;
 
@@ -830,7 +659,7 @@ export interface Bridge extends BaseContract {
 
   networkID(overrides?: CallOverrides): Promise<number>;
 
-  polygonRollupManager(overrides?: CallOverrides): Promise<string>;
+  polygonZkEVMaddress(overrides?: CallOverrides): Promise<string>;
 
   precalculatedWrapperAddress(
     originNetwork: PromiseOrValue<BigNumberish>,
@@ -866,8 +695,6 @@ export interface Bridge extends BaseContract {
   >;
 
   callStatic: {
-    WETHToken(overrides?: CallOverrides): Promise<string>;
-
     activateEmergencyState(overrides?: CallOverrides): Promise<void>;
 
     bridgeAsset(
@@ -888,33 +715,9 @@ export interface Bridge extends BaseContract {
       overrides?: CallOverrides
     ): Promise<void>;
 
-    bridgeMessageWETH(
-      destinationNetwork: PromiseOrValue<BigNumberish>,
-      destinationAddress: PromiseOrValue<string>,
-      amountWETH: PromiseOrValue<BigNumberish>,
-      forceUpdateGlobalExitRoot: PromiseOrValue<boolean>,
-      metadata: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<void>;
-
-    calculateRoot(
-      leafHash: PromiseOrValue<BytesLike>,
+    claimAsset(
       smtProof: PromiseOrValue<BytesLike>[],
       index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    calculateTokenWrapperAddress(
-      originNetwork: PromiseOrValue<BigNumberish>,
-      originTokenAddress: PromiseOrValue<string>,
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    claimAsset(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -927,9 +730,8 @@ export interface Bridge extends BaseContract {
     ): Promise<void>;
 
     claimMessage(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
+      smtProof: PromiseOrValue<BytesLike>[],
+      index: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -950,11 +752,7 @@ export interface Bridge extends BaseContract {
 
     depositCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-    gasTokenAddress(overrides?: CallOverrides): Promise<string>;
-
-    gasTokenMetadata(overrides?: CallOverrides): Promise<string>;
-
-    gasTokenNetwork(overrides?: CallOverrides): Promise<number>;
+    getDepositRoot(overrides?: CallOverrides): Promise<string>;
 
     getLeafValue(
       leafType: PromiseOrValue<BigNumberish>,
@@ -964,13 +762,6 @@ export interface Bridge extends BaseContract {
       destinationAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       metadataHash: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<string>;
-
-    getRoot(overrides?: CallOverrides): Promise<string>;
-
-    getTokenMetadata(
-      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<string>;
 
@@ -984,17 +775,13 @@ export interface Bridge extends BaseContract {
 
     initialize(
       _networkID: PromiseOrValue<BigNumberish>,
-      _gasTokenAddress: PromiseOrValue<string>,
-      _gasTokenNetwork: PromiseOrValue<BigNumberish>,
       _globalExitRootManager: PromiseOrValue<string>,
-      _polygonRollupManager: PromiseOrValue<string>,
-      _gasTokenMetadata: PromiseOrValue<BytesLike>,
+      _polygonZkEVMaddress: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<void>;
 
     isClaimed(
-      leafIndex: PromiseOrValue<BigNumberish>,
-      sourceBridgeNetwork: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<boolean>;
 
@@ -1004,7 +791,7 @@ export interface Bridge extends BaseContract {
 
     networkID(overrides?: CallOverrides): Promise<number>;
 
-    polygonRollupManager(overrides?: CallOverrides): Promise<string>;
+    polygonZkEVMaddress(overrides?: CallOverrides): Promise<string>;
 
     precalculatedWrapperAddress(
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -1060,15 +847,15 @@ export interface Bridge extends BaseContract {
       depositCount?: null
     ): BridgeEventEventFilter;
 
-    "ClaimEvent(uint256,uint32,address,address,uint256)"(
-      globalIndex?: null,
+    "ClaimEvent(uint32,uint32,address,address,uint256)"(
+      index?: null,
       originNetwork?: null,
       originAddress?: null,
       destinationAddress?: null,
       amount?: null
     ): ClaimEventEventFilter;
     ClaimEvent(
-      globalIndex?: null,
+      index?: null,
       originNetwork?: null,
       originAddress?: null,
       destinationAddress?: null,
@@ -1099,8 +886,6 @@ export interface Bridge extends BaseContract {
   };
 
   estimateGas: {
-    WETHToken(overrides?: CallOverrides): Promise<BigNumber>;
-
     activateEmergencyState(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
@@ -1123,33 +908,9 @@ export interface Bridge extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
-    bridgeMessageWETH(
-      destinationNetwork: PromiseOrValue<BigNumberish>,
-      destinationAddress: PromiseOrValue<string>,
-      amountWETH: PromiseOrValue<BigNumberish>,
-      forceUpdateGlobalExitRoot: PromiseOrValue<boolean>,
-      metadata: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<BigNumber>;
-
-    calculateRoot(
-      leafHash: PromiseOrValue<BytesLike>,
+    claimAsset(
       smtProof: PromiseOrValue<BytesLike>[],
       index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    calculateTokenWrapperAddress(
-      originNetwork: PromiseOrValue<BigNumberish>,
-      originTokenAddress: PromiseOrValue<string>,
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    claimAsset(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -1162,9 +923,8 @@ export interface Bridge extends BaseContract {
     ): Promise<BigNumber>;
 
     claimMessage(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
+      smtProof: PromiseOrValue<BytesLike>[],
+      index: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -1187,11 +947,7 @@ export interface Bridge extends BaseContract {
 
     depositCount(overrides?: CallOverrides): Promise<BigNumber>;
 
-    gasTokenAddress(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gasTokenMetadata(overrides?: CallOverrides): Promise<BigNumber>;
-
-    gasTokenNetwork(overrides?: CallOverrides): Promise<BigNumber>;
+    getDepositRoot(overrides?: CallOverrides): Promise<BigNumber>;
 
     getLeafValue(
       leafType: PromiseOrValue<BigNumberish>,
@@ -1201,13 +957,6 @@ export interface Bridge extends BaseContract {
       destinationAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       metadataHash: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-
-    getRoot(overrides?: CallOverrides): Promise<BigNumber>;
-
-    getTokenMetadata(
-      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1221,17 +970,13 @@ export interface Bridge extends BaseContract {
 
     initialize(
       _networkID: PromiseOrValue<BigNumberish>,
-      _gasTokenAddress: PromiseOrValue<string>,
-      _gasTokenNetwork: PromiseOrValue<BigNumberish>,
       _globalExitRootManager: PromiseOrValue<string>,
-      _polygonRollupManager: PromiseOrValue<string>,
-      _gasTokenMetadata: PromiseOrValue<BytesLike>,
+      _polygonZkEVMaddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<BigNumber>;
 
     isClaimed(
-      leafIndex: PromiseOrValue<BigNumberish>,
-      sourceBridgeNetwork: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -1241,7 +986,7 @@ export interface Bridge extends BaseContract {
 
     networkID(overrides?: CallOverrides): Promise<BigNumber>;
 
-    polygonRollupManager(overrides?: CallOverrides): Promise<BigNumber>;
+    polygonZkEVMaddress(overrides?: CallOverrides): Promise<BigNumber>;
 
     precalculatedWrapperAddress(
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -1276,8 +1021,6 @@ export interface Bridge extends BaseContract {
   };
 
   populateTransaction: {
-    WETHToken(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
     activateEmergencyState(
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
@@ -1300,33 +1043,9 @@ export interface Bridge extends BaseContract {
       overrides?: PayableOverrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
-    bridgeMessageWETH(
-      destinationNetwork: PromiseOrValue<BigNumberish>,
-      destinationAddress: PromiseOrValue<string>,
-      amountWETH: PromiseOrValue<BigNumberish>,
-      forceUpdateGlobalExitRoot: PromiseOrValue<boolean>,
-      metadata: PromiseOrValue<BytesLike>,
-      overrides?: Overrides & { from?: PromiseOrValue<string> }
-    ): Promise<PopulatedTransaction>;
-
-    calculateRoot(
-      leafHash: PromiseOrValue<BytesLike>,
+    claimAsset(
       smtProof: PromiseOrValue<BytesLike>[],
       index: PromiseOrValue<BigNumberish>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    calculateTokenWrapperAddress(
-      originNetwork: PromiseOrValue<BigNumberish>,
-      originTokenAddress: PromiseOrValue<string>,
-      token: PromiseOrValue<string>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    claimAsset(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -1339,9 +1058,8 @@ export interface Bridge extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     claimMessage(
-      smtProofLocalExitRoot: PromiseOrValue<BytesLike>[],
-      smtProofRollupExitRoot: PromiseOrValue<BytesLike>[],
-      globalIndex: PromiseOrValue<BigNumberish>,
+      smtProof: PromiseOrValue<BytesLike>[],
+      index: PromiseOrValue<BigNumberish>,
       mainnetExitRoot: PromiseOrValue<BytesLike>,
       rollupExitRoot: PromiseOrValue<BytesLike>,
       originNetwork: PromiseOrValue<BigNumberish>,
@@ -1364,11 +1082,7 @@ export interface Bridge extends BaseContract {
 
     depositCount(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    gasTokenAddress(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gasTokenMetadata(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    gasTokenNetwork(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    getDepositRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getLeafValue(
       leafType: PromiseOrValue<BigNumberish>,
@@ -1378,13 +1092,6 @@ export interface Bridge extends BaseContract {
       destinationAddress: PromiseOrValue<string>,
       amount: PromiseOrValue<BigNumberish>,
       metadataHash: PromiseOrValue<BytesLike>,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-
-    getRoot(overrides?: CallOverrides): Promise<PopulatedTransaction>;
-
-    getTokenMetadata(
-      token: PromiseOrValue<string>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1400,17 +1107,13 @@ export interface Bridge extends BaseContract {
 
     initialize(
       _networkID: PromiseOrValue<BigNumberish>,
-      _gasTokenAddress: PromiseOrValue<string>,
-      _gasTokenNetwork: PromiseOrValue<BigNumberish>,
       _globalExitRootManager: PromiseOrValue<string>,
-      _polygonRollupManager: PromiseOrValue<string>,
-      _gasTokenMetadata: PromiseOrValue<BytesLike>,
+      _polygonZkEVMaddress: PromiseOrValue<string>,
       overrides?: Overrides & { from?: PromiseOrValue<string> }
     ): Promise<PopulatedTransaction>;
 
     isClaimed(
-      leafIndex: PromiseOrValue<BigNumberish>,
-      sourceBridgeNetwork: PromiseOrValue<BigNumberish>,
+      index: PromiseOrValue<BigNumberish>,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 
@@ -1422,7 +1125,7 @@ export interface Bridge extends BaseContract {
 
     networkID(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
-    polygonRollupManager(
+    polygonZkEVMaddress(
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

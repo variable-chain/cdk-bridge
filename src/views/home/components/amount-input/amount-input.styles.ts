@@ -12,6 +12,7 @@ export const useAmountInputStyles = createUseStyles((theme: Theme) => ({
     fontSize: "20px",
     lineHeight: "24px",
     outline: "none",
+    padding: 5,
     textAlign: "right",
     width: "100%",
     [theme.breakpoints.upSm]: {
