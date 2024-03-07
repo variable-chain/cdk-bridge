@@ -7,8 +7,10 @@ export const useAmountInputStyles = createUseStyles((theme: Theme) => ({
     "&:disabled": {
       backgroundColor: "transparent",
     },
+    backgroundColor: "#2b2b2b",
     border: "none",
     borderRadius: 8,
+    color:"#fff",
     fontSize: "20px",
     lineHeight: "24px",
     outline: "none",

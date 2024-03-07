@@ -1,6 +1,6 @@
-#/bin/bash
+#!/bin/bash
 
-BASE_PATH="/home/desire/Projects/Variable/cdk-bridge/src/types/contracts"
+BASE_PATH="src/types/contracts"
 
 # Clean up
 rm -rf $BASE_PATH

@@ -64,9 +64,11 @@ export const useTokenListStyles = createUseStyles((theme: Theme) => ({
     marginRight: theme.spacing(1.25),
   },
   searchInput: {
+    backgroundColor:"#2b2b2b",
     border: 0,
+    color:"#fff",
     outline: 0,
-    padding: [theme.spacing(2), 0],
+    padding: [theme.spacing(2), 10],
     width: "100%",
   },
   searchInputContainer: {
