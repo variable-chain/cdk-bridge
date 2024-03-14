@@ -17,6 +17,7 @@ import { InfoBanner } from "src/views/shared/info-banner/info-banner.view";
 import {Navbar} from "src/views/shared/navbar/navbar.view";
 import { NetworkBox } from "src/views/shared/network-box/network-box.view";
 import { Typography } from "src/views/shared/typography/typography.view";
+import { BridgeCard } from "./bridge-card/bridge-card.view";
 
 export const Login: FC = () => {
   
@@ -68,25 +69,26 @@ export const Login: FC = () => {
     <div className={classes.login}>
       <Navbar />
       <div className={classes.contentWrapper}>
+        <BridgeCard />
         {/* <PolygonZkEVMLogo className={classes.logo} /> */}
         {/* <Typography className={classes.appName} type="body1">
           {appName}
         </Typography> */}
-        <div className={classes.networkBoxWrapper}>
+        {/* <div className={classes.networkBoxWrapper}>
           <NetworkBox />
-        </div>
-        {ethereumChain.chainId !== EthereumChainId.MAINNET && (
+        </div> */}
+        {/* {ethereumChain.chainId !== EthereumChainId.MAINNET && (
           <InfoBanner message={`Connect with ${ethereumChain.name} environment`} />
-        )}
+        )} */}
         <div className={classes.cardWrap}>
-          <Card className={classes.card}>
+          {/* <Card className={classes.card}>
             <>
               <Typography className={classes.cardHeader} type="h1">
                 Connect a wallet
               </Typography>
               <WalletList onSelectWallet={onCheckAndConnectProvider} />
             </>
-          </Card>
+          </Card> */}
           {connectedProvider.status === "failed" && (
             <ErrorMessage error={connectedProvider.error} />
           )}

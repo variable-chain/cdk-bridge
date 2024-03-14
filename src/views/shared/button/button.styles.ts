@@ -16,7 +16,7 @@ export const useButtonStyles = createUseStyles((theme: Theme) => ({
     backgroundColor: theme.palette.primary.main,
     border: "none",
     borderRadius: 80,
-    color: theme.palette.white,
+    color: theme.palette.black,
     cursor: "pointer",
     display: "flex",
     fontSize: "20px",

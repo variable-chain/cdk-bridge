@@ -205,6 +205,8 @@ export const BridgeForm: FC<BridgeFormProps> = ({ account, formData, onResetForm
   }, [callIfMounted, defaultTokens, getTokenBalance, selectedChains, tokens]);
 
   useEffect(() => {
+    console.log(token);
+    
     // Load the balance of the selected token in both networks
     if (selectedChains && token) {
       setBalanceFrom({ status: "loading" });
